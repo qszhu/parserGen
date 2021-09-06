@@ -1,0 +1,31 @@
+```
+import { lazy, oneOf, oneOrMore, Parser, regExp, seqOf, str, zeroOrMore, zeroOrOne } from './parserLib'
+
+const whitespace = regExp(/^\s/)
+const singleLineComment = regExp(/^[/][/].*/)
+const multiLineComment = regExp(/^[/][*].*[*][/]/s)
+const comment = oneOf(singleLineComment, multiLineComment)
+const ignored = zeroOrMore(oneOf(whitespace, comment))
+
+const token = (s: string) =>
+  seqOf(ignored, str(s))
+    .map(([_, res]) => res)
+
+const regexToken = (pattern: RegExp) =>
+  seqOf(ignored, regExp(pattern))
+    .map(([_, res]) => res)
+```
+
+prog -> (functionDecl | functionCall)* ;
+
+functionDecl -> "function" Identifier "(" ")" functionBody ;
+
+functionBody -> "{" functionCall* "}" ;
+
+functionCall -> Identifier "(" parameterList? ")" ";" ;
+
+parameterList -> StringLiteral ("," StringLiteral)* ;
+
+Identifier : /^[a-zA-Z_][a-zA-Z0-9_]*/ ;
+
+StringLiteral : /^"[^"]*"/ ;

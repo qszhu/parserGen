@@ -1,0 +1,42 @@
+```
+import { lazy, oneOf, oneOrMore, Parser, regExp, seqOf, str, zeroOrMore, zeroOrOne } from './parserLib'
+
+const whitespace = regExp(/^\s/)
+const singleLineComment = regExp(/^[/][/].*/)
+const multiLineComment = regExp(/^[/][*].*[*][/]/s)
+const comment = oneOf(singleLineComment, multiLineComment)
+const ignored = zeroOrMore(oneOf(whitespace, comment))
+
+const token = (s: string) =>
+  seqOf(ignored, str(s))
+    .map(([_, res]) => res)
+
+const regexToken = (pattern: RegExp) =>
+  seqOf(ignored, regExp(pattern))
+    .map(([_, res]) => res)
+```
+
+prog -> (functionDecl | functionCall)*
+  .map(res => ({ type: 'prog', stmts: res }));
+
+functionDecl -> "function" Identifier "(" ")" functionBody
+  .map(([_f, name, _lp, _rp, body]) => ({ type: 'funcDecl', name, body }));
+
+functionBody -> "{" functionCall* "}"
+  .map(([_lb, stmts, _rb]) => ({ type: 'funcBody', stmts }));
+
+functionCall -> Identifier "(" parameterList? ")" ";"
+  .map(([name, _lp, params, _rp]) => ({ type: 'funcCall', name, params }));
+
+parameterList -> StringLiteral ("," StringLiteral)*
+  .map(([first, rest])=> {
+    if (Array.isArray(rest)) {
+      rest = rest.map(r => r[1])
+      return [first, ...rest]
+    }
+    return first
+  });
+
+Identifier : /^[a-zA-Z_][a-zA-Z0-9_]*/ ;
+
+StringLiteral : /^"[^"]*"/ ;
