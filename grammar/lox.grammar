@@ -5,7 +5,7 @@ const whitespace = regExp(/^\s/)
 const singleLineComment = regExp(/^[/][/].*/)
 const multiLineComment = regExp(/^[/][*].*[*][/]/s)
 const comment = oneOf(singleLineComment, multiLineComment)
-const ignored = zeroOrMore(oneOf(whitespace, comment))
+export const ignored = zeroOrMore(oneOf(whitespace, comment))
 
 const token = (s: string) =>
   seqOf(ignored, str(s))
@@ -66,7 +66,7 @@ logic_and      -> equality ( "and" equality )* ;
 
 equality       -> comparison ( ( "!=" | "==" ) comparison )* ;
 
-comparison     -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+comparison     -> term ( ( ">=" | ">" | "<=" | "<" ) term )* ;
 
 term           -> factor ( ( "-" | "+" ) factor )* ;
 
@@ -86,7 +86,7 @@ parameters     -> IDENTIFIER ( "," IDENTIFIER )* ;
 
 args           -> expression ( "," expression )* ;
 
-NUMBER         : /^[0-9]+ | ^[0-9]+\.[0-9]+/ ;
+NUMBER         : /^[0-9]+(\.[0-9]+)?/ ;
 
 STRING         : /^"[^"]*"/ ;
 
