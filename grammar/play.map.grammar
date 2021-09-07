@@ -23,10 +23,10 @@ functionDecl -> "function" Identifier "(" ")" functionBody
   .map(([_f, name, _lp, _rp, body]) => ({ type: 'funcDecl', name, body }));
 
 functionBody -> "{" functionCall* "}"
-  .map(([_lb, stmts, _rb]) => ({ type: 'funcBody', stmts }));
+  .map(([_, stmts]) => ({ type: 'funcBody', stmts }));
 
 functionCall -> Identifier "(" parameterList? ")" ";"
-  .map(([name, _lp, params, _rp]) => ({ type: 'funcCall', name, params }));
+  .map(([name, _, params]) => ({ type: 'funcCall', name, params }));
 
 parameterList -> StringLiteral ("," StringLiteral)*
   .map(([first, rest])=> {
